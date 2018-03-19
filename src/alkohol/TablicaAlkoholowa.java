@@ -6,9 +6,6 @@
 package alkohol;
 
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author Leszek
@@ -24,18 +21,18 @@ public class TablicaAlkoholowa {
     // np. wynik odczytu z tablicy7c
     double wartosc = 0; // wówczas powinno być moc wynosi 94,26 mocAlkoholu
     Integer indeks = null;  //indeks
-    String nazwaPliku;
-    // String nazwaPliku = "dane/tablice7c.csv";
+    String nazwaPliku;   // String nazwaPliku = "dane/tablice7c.csv";
 
     public TablicaAlkoholowa(double kolumna, double wiersz, String nazwaPliku) {
         this.kolumna = kolumna;
         this.wiersz = wiersz;
         this.nazwaPliku = nazwaPliku;
-        this.indeks = indeks;
         this.wartosc = odczytWartosci(kolumna, wiersz, nazwaPliku);
     }
-
-    public double odczytWartosci(double kolumna, double wiersz, String nazwaPliku) {
+    
+    
+    
+    private double odczytWartosci(double kolumna, double wiersz, String nazwaPliku) {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(nazwaPliku));

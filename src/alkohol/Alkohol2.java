@@ -48,28 +48,63 @@ public class Alkohol2 {
         System.out.println("----------------------");
 
         String nazwaPliku9b = "dane/tablice9b.csv";
-        // tutaj podajemy moc alkoholu  co 0,1° od 80-100  np.93.7
-        double odczytanaMocAlkoholu9b = 93.1;
-        // tutaj podajemy wage alkoholu od 100 do 1000kg (co 10)   np. 620
-        double odczytanaWaga9b = 620;
-        //double objetoscAlkoholu = 706,09;
-        TablicaAlkoholowa tablica9b = new TablicaAlkoholowa(odczytanaMocAlkoholu9b, odczytanaWaga9b, nazwaPliku9b);
         
-        System.out.println("tablica9b :  odczytanaMocAlkoholu " + tablica9b.kolumna);
-        System.out.println("tablica9b :  odczytanaWaga " + tablica9b.wiersz);
-        System.out.println("tablica9b :  objetoscAlkoholu " + tablica9b.wartosc);
-        System.out.println("----------------------");
-        
-        double odczytanaWaga9bx = 61778;
-        //double objetoscAlkoholu = 70609;
-        TablicaAlkoholowa2 tablica9bx = new TablicaAlkoholowa2(odczytanaMocAlkoholu9b, odczytanaWaga9bx, nazwaPliku9b);
-        
-        System.out.println("tablica9bx :  odczytanaMocAlkoholu " + tablica9bx.kolumna);
-        System.out.println("tablica9bx :  odczytanaWaga " + tablica9bx.wiersz);
-        System.out.println("tablica9bx :  objetoscAlkoholu " + tablica9bx.wartosc);
-        System.out.println("----------------------");
-        
-        
+        double mocAlkoholu20 = 93.1; // tutaj podajemy moc alkoholu  co 0,1° od 80-100  np.93.7      
+        double wagaNetto = 617782;  // tutaj podajemy wage alkoholu od 100 do 1000kg (co 10)   np. 620
+                                    //double objetoscAlkoholu = 706,09;      
+        int auxiliaryVariable = 0; // zmienna pomocnicza do obliczeń
+        double temporary = wagaNetto;
+        double[] wagaTemp = new double[6]; // tablica przchowująca wagę natto rozbitą na wartości, aby odczytać z z tablicy 100 do 1000kg	
+        double wartoscTab = 0.0; // wartosc wyliczona z tablicy9b
+
+        if (temporary >= 100000 && temporary < 1000000) {
+            auxiliaryVariable = (int) temporary / 10000;
+            wagaTemp[0] = 10 * auxiliaryVariable;
+            TablicaAlkoholowa tab0 = new TablicaAlkoholowa(mocAlkoholu20, wagaTemp[0], nazwaPliku9b);
+            wartoscTab += tab0.wartosc * 1000;
+            temporary = temporary - wagaTemp[0] * 1000;
+            System.out.println("0 :  objetoscAlkoholu " + "wagaTemp[0]" + wagaTemp[0] + "    "  + wartoscTab);
+        }
+        if (temporary >= 10000) {
+            auxiliaryVariable = (int) temporary / 1000;
+            wagaTemp[1] = 10 * auxiliaryVariable;
+            TablicaAlkoholowa tab0 = new TablicaAlkoholowa(mocAlkoholu20, wagaTemp[1], nazwaPliku9b);
+            wartoscTab += tab0.wartosc * 100;
+            temporary = temporary - wagaTemp[1] * 100;
+            System.out.println("1 :  objetoscAlkoholu " + "wagaTemp[1]" + wagaTemp[1] + "    " + wartoscTab);
+        }
+        if (temporary >= 1000) {
+            auxiliaryVariable = (int) temporary / 100;
+            wagaTemp[2] = 10 * auxiliaryVariable;
+            TablicaAlkoholowa tab0 = new TablicaAlkoholowa(mocAlkoholu20, wagaTemp[2], nazwaPliku9b);
+            wartoscTab += tab0.wartosc * 10;
+            temporary = temporary - wagaTemp[2] * 10;
+            System.out.println("2 :  objetoscAlkoholu " + "wagaTemp[2]" + wagaTemp[2] + "    " + wartoscTab);
+        }
+        if (temporary >= 100) {
+            auxiliaryVariable = (int) temporary / 10;
+            wagaTemp[3] = 10 * auxiliaryVariable;
+            TablicaAlkoholowa tab0 = new TablicaAlkoholowa(mocAlkoholu20, wagaTemp[3], nazwaPliku9b);
+            wartoscTab += tab0.wartosc * 1;
+            temporary = temporary - wagaTemp[3] * 1;
+            System.out.println("3 :  objetoscAlkoholu " + "wagaTemp[3]" + wagaTemp[3] + "    " + wartoscTab);
+        }
+        if (temporary >= 10) {
+            auxiliaryVariable = (int) temporary / 1;
+            wagaTemp[4] = 10 * auxiliaryVariable;
+            TablicaAlkoholowa tab0 = new TablicaAlkoholowa(mocAlkoholu20, wagaTemp[4], nazwaPliku9b);
+            wartoscTab += tab0.wartosc * 0.1;
+            temporary = temporary - wagaTemp[4] * 0.1;
+            System.out.println("4 :  objetoscAlkoholu " + "wagaTemp[4]" + wagaTemp[4] + "    " + wartoscTab);
+        }
+        if (temporary >= 1) {
+            auxiliaryVariable = (int) temporary * 10;
+            wagaTemp[5] = 10 * auxiliaryVariable;
+            TablicaAlkoholowa tab0 = new TablicaAlkoholowa(mocAlkoholu20, wagaTemp[5], nazwaPliku9b);
+            wartoscTab += tab0.wartosc * 0.01;
+            System.out.println("5 :  objetoscAlkoholu " + "wagaTemp[5]" + wagaTemp[5] + "    " + wartoscTab);      
+        }
+        System.out.println("5 :  objetoscAlkoholu " + wartoscTab);
     }
 
 }

@@ -366,9 +366,19 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jButton10.setBackground(new java.awt.Color(102, 255, 0));
         jButton10.setText("Oblicz");
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
 
         jButton11.setBackground(new java.awt.Color(0, 255, 204));
         jButton11.setText("Wyczyść");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -493,41 +503,61 @@ public class NewJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Double odczytanaMocAlkoholu7c = null;
-        Double odczytanaTemperatura7c = null;
-        String nazwaPliku7c = "dane/tablice7c.csv";
-        // uszykować warunki wprowadzonych liczb poprawność
-
+        Double readAlcoholPower7c = null;
+        Double temperatureRead7c = null;
+        String fileName7c = "dane/tablice7c.csv";
         if (jTextField2.getText() != null) {
             try {
-                odczytanaMocAlkoholu7c = Double.parseDouble(jTextField2.getText().trim());
+                String tmp = jTextField2.getText().trim();
+                String tmpPower = null;
+                if (tmp.contains(",")) {
+                    tmpPower = tmp.replace(",", ".");
+                } else {
+                    tmpPower = tmp;
+                }
+                if (tmpPower.matches("[7-9][0-9]\\.[0-9]|10[01]\\.[0-9]|[7-9]\\.[0-9]|10[01]|[7-9][0-9]")) {
+                    readAlcoholPower7c = Double.parseDouble(tmpPower);
+                } else {
+                    jTextField2.setText("");
+                    JOptionPane.showMessageDialog(null, "W polu 'mocy pozornej' podaj liczbę z zakresu 70-101,9 z dokładnością do 0,1");
+                }
             } catch (NumberFormatException e) {
+                jTextField2.setText("");
                 JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'mocy pozornej'");
-
             }
         }
         if (jTextField3.getText() != null) {
             try {
-                odczytanaTemperatura7c = Double.parseDouble(jTextField3.getText().trim());
+                String tmp = jTextField3.getText().trim();
+                String tmpTemp = null;
+                if (tmp.contains(",")) {
+                    tmpTemp = tmp.replace(",", ".");
+                } else {
+                    tmpTemp = tmp;
+                }
+                if (tmpTemp.matches("\\+?30|\\+?[12]?[0-9](\\.[05])?|\\-10(\\.0)?|\\-[0-9](\\.[05])?")) {
+                    temperatureRead7c = Double.parseDouble(tmpTemp);
+                } else {
+                    jTextField3.setText("");
+                    JOptionPane.showMessageDialog(null, "W polu 'temperatura zmierzona' podaj liczbę z zakresu -10 do +30 z dokładnością do 0,5");
+                }
             } catch (NumberFormatException e) {
+                jTextField3.setText("");
                 JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'temperatura zmierzona'");
             }
         }
-        if ((odczytanaMocAlkoholu7c != null) && (odczytanaTemperatura7c != null)) {
+        if ((readAlcoholPower7c != null) && (temperatureRead7c != null)) {
             try {
-                TablicaAlkoholowa tablica7c = new TablicaAlkoholowa(odczytanaMocAlkoholu7c, odczytanaTemperatura7c, nazwaPliku7c);
-                double wynik = tablica7c.wartosc;
-                jButton2.setText("" + wynik);
+                AlcoholBoard board7c = new AlcoholBoard(readAlcoholPower7c, temperatureRead7c, fileName7c);
+                double score = board7c.vaule;
+                jButton2.setText("" + score);
 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "ogólny błąd");
-
             }
         } else {
             JOptionPane.showMessageDialog(null, "Liczba jest wymagana");
         }
-
-
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jButton2FocusGained
@@ -544,96 +574,292 @@ public class NewJFrame extends javax.swing.JFrame {
         // odczytana objętość w dm3 
         Integer givenVolumeInt = null;
         // tutaj podajemy odczytana temperature alkoholu od -10 do +30 (co 0,5°)   np.17,5
-        Double odczytanaTemperatura8d = null;
-        String nazwaPliku8d = "dane/tablice8d.csv";
-        // uszykować warunki wprowadzonych liczb poprawność       
+        Double temperatureRead8d = null;
+        //volume1000kg - objętość 1000kg alkoholu o wyliczonej mocy w 20°C
+        double volume1000kg = 0.0;
+
+        String fileName8d = "dane/tablice8d.csv";
+        String fileName9b = "dane/tablice9b.csv";
+
+        // przygotować validacę   
         if (jTextField5.getText() != null) {
             try {
-                odczytanaTemperatura8d = Double.parseDouble(jTextField5.getText().trim());
+                String tmp = jTextField5.getText().trim();
+                String tmpTemp = null;
+                if (tmp.contains(",")) {
+                    tmpTemp = tmp.replace(",", ".");
+                } else {
+                    tmpTemp = tmp;
+                }
+                if (tmpTemp.matches("\\+?30|\\+?[12]?[0-9](\\.[05])?|\\-10(\\.0)?|\\-[0-9](\\.[05])?")) {
+                    temperatureRead8d = Double.parseDouble(tmpTemp);
+                } else {
+                    jTextField5.setText("");
+                    JOptionPane.showMessageDialog(null, "W polu 'temperatura zmierzona' podaj liczbę z zakresu -10 do +30 z dokładnością do 0,5");
+                }
             } catch (NumberFormatException e) {
+                jTextField5.setText("");
                 JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'temperatura w zbiorniku'");
             }
         }
         if (jButton2.getText() != null) {
             try {
                 // pobieramy moc rzeczywista obliczoną z tablicy 7c i zaokrągloną do całości
-                powerMeasuredInteger = Math.round((int) Double.parseDouble(jButton2.getText()));
-                realPower = Double.parseDouble(jButton2.getText())*10;
-                realPower = Math.round(realPower)/10;
-                
-  
+                powerMeasuredInteger = (int) Math.round(Double.parseDouble(jButton2.getText()));
+                realPower = Double.parseDouble(jButton2.getText()) * 10;
+                realPower = Math.round(realPower);
+                realPower /= 10;
 
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu '% vol. w 20ºC'");
+                JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu '% vol. w 20ºC' powinna być w przedziale 80 -100");
             }
         }
         if (jTextField4.getText() != null) {
             try {
-                givenVolumeInt = Integer.parseInt(jTextField4.getText().trim());
+                String tmp = jTextField4.getText().trim();
+                String tmpVol = null;
+                if (tmp.contains(",")) {
+                    tmpVol = tmp.replace(",", ".");
+                } else {
+                    tmpVol = tmp;
+                }
+                if (tmpVol.matches("\\+?\\d*\\.?\\d*")) {
+                    givenVolumeInt = (int) Math.round(Double.parseDouble(tmpVol));
+                    if (givenVolumeInt > 0) {
+                        jTextField4.setText("" + givenVolumeInt);
+                    } else {
+                        givenVolumeInt = null;
+                        jTextField4.setText("");
+                        JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'objętość' podaj liczbę całkowitą wiekszą od 0");
+                    }
+                    System.out.println("givenVolumeInt " + givenVolumeInt);
+                } else {
+                    jTextField4.setText("");
+                    JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'objętość' podaj liczbę całkowitą wiekszą od 0");
+                }
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'objętość'");
-
+                jTextField4.setText("");
+                JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'objętość' podaj liczbe całkowitą wiekszą od 0");
             }
-        }
-//        if ((powerMeasuredInteger != null) && (odczytanaTemperatura8d != null)) {
-//            try {
-//                TablicaAlkoholowa tablica8d = new TablicaAlkoholowa(powerMeasuredInteger, odczytanaTemperatura8d, nazwaPliku8d);
-//                double correctionTemp = tablica8d.wartosc;
-//                double correction = correctionTemp - 0.07;
-//                // wynik to poprawka tablicowa do obliczeń uzywa sie poprawka-0,07
-//                jButton3.setText("" + correctionTemp + "-0,07=" + correction);
-//                 // dm3 w 20ºC
-//                double volumeIn20Degrees = (100 + correction) * givenVolumeInt / 100;
-//                jButton5.setText("" + volumeIn20Degrees);
-//                //dm3 100% vol.
-//                int volumeOf100Percent = (int)Math.round(volumeIn20Degrees * realPower / 100);
-//                jButton6.setText("" + volumeOf100Percent);
-//
-//            } catch (Exception e) {
-//                JOptionPane.showMessageDialog(null, "ogólny błąd");
-//
-//            }
-//        } else {
-//            JOptionPane.showMessageDialog(null, "Liczba jest wymagana");
-//        }
-        
-        if ((givenVolumeInt != null) && (powerMeasuredInteger != null) && (odczytanaTemperatura8d != null)) {
+        }       
+        if ((givenVolumeInt != null) && (powerMeasuredInteger != null) && (temperatureRead8d != null)) {
             try {
-                TablicaAlkoholowa tablica8d = new TablicaAlkoholowa(powerMeasuredInteger, odczytanaTemperatura8d, nazwaPliku8d);
-                double correctionTemp = tablica8d.wartosc;
-                double correction = correctionTemp - 0.07;
-                // wynik to poprawka tablicowa do obliczeń uzywa sie poprawka-0,07
+                  if (powerMeasuredInteger >= 80 && powerMeasuredInteger <= 100) {
+                AlcoholBoard board8d = new AlcoholBoard(powerMeasuredInteger, temperatureRead8d, fileName8d);
+                double correctionTemp = board8d.vaule;
+                double correction = Math.round((correctionTemp - 0.07) * 100);
+               correction /= 100;
+                // score to poprawka tablicowa do obliczeń uzywa sie poprawka-0,07
                 jButton3.setText("" + correctionTemp + " => " + correction);
-                // dm3 w 20ºC
+                // volumeIn20Degrees => dm3 w 20ºC , po zaokrągleniu do 2-miejsc po przecinku => volumeIn20DegreesView
                 double volumeIn20Degrees = (100 + correction) * givenVolumeInt / 100;
-                jButton5.setText("" + volumeIn20Degrees);
+                double volumeIn20DegreesView = volumeIn20Degrees * 100;
+                volumeIn20DegreesView = Math.round(volumeIn20DegreesView);
+                volumeIn20DegreesView = volumeIn20DegreesView / 100;
+                jButton5.setText("" + volumeIn20DegreesView);
                 //dm3 100% vol.
-                int volumeOf100Percent = (int)Math.round(volumeIn20Degrees * realPower / 100);
-                jButton6.setText("" + volumeOf100Percent);
-
-                //waga netto 
-                
-                
-                
-                
-                
-                
-                
-                
-                
-//                double netWeight = (100000 / givenVolumeInt) * volumeOf100Percent;
-//		netWeight = Math.round(netWeight);
-//		netWeight = netWeight / 100;
-//                jButton4.setText("" + netWeight);
-
+                int volumeOf100Percent = (int) Math.round(volumeIn20Degrees * realPower / 100);
+                jButton6.setText("" + volumeOf100Percent);                 
+                //waga netto    
+                // givenVolumeInt - objętość alkoholu w dm3 zaokrąglona do całości
+                // wartość potrzebna do obliczeń: volume1000kg => Obj. 1000kg alk. w 20ºC na podstawie talicy9b
+                AlcoholBoard board9b = new AlcoholBoard(realPower, 1000, fileName9b);
+                volume1000kg = board9b.vaule;
+                // na postawie (dm3 w 20ºC) i odczytu z tablicy 9b dla 1000kg i realPower  np. 28208 * (1000 / 1106,6) = 25606,39070442992 zaokrąglamy = 25606
+                double netWeight = (100000 / volume1000kg) * volumeOf100Percent;
+                netWeight = Math.round(netWeight);
+                netWeight = netWeight / 100;
+                jButton4.setText("" + netWeight);
+                  } else {
+                      JOptionPane.showMessageDialog(null, "Niepoprawna wartość w polu '% vol. w 20ºC' powinna być w przedziale 80 -100");
+                  }                
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "ogólny błąd");
-
             }
         } else {
             JOptionPane.showMessageDialog(null, "Liczba jest wymagana");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        Double readAlcoholPower7c = null;
+        Double temperatureRead7c = null;
+        String fileName7c = "dane/tablice7c.csv";
+        if (jTextField2.getText() != null) {
+            try {
+                String tmp = jTextField2.getText().trim();
+                String tmpPower = null;
+                if (tmp.contains(",")) {
+                    tmpPower = tmp.replace(",", ".");
+                } else {
+                    tmpPower = tmp;
+                }
+                if (tmpPower.matches("[7-9][0-9]\\.[0-9]|10[01]\\.[0-9]|[7-9]\\.[0-9]|10[01]|[7-9][0-9]")) {
+                    readAlcoholPower7c = Double.parseDouble(tmpPower);
+                } else {
+                    jTextField2.setText("");
+                    JOptionPane.showMessageDialog(null, "W polu 'mocy pozornej' podaj liczbę z zakresu 70-101,9 z dokładnością do 0,1");
+                }
+            } catch (NumberFormatException e) {
+                jTextField2.setText("");
+                JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'mocy pozornej'");
+            }
+        }
+        if (jTextField3.getText() != null) {
+            try {
+                String tmp = jTextField3.getText().trim();
+                String tmpTemp = null;
+                if (tmp.contains(",")) {
+                    tmpTemp = tmp.replace(",", ".");
+                } else {
+                    tmpTemp = tmp;
+                }
+                if (tmpTemp.matches("\\+?30|\\+?[12]?[0-9](\\.[05])?|\\-10(\\.0)?|\\-[0-9](\\.[05])?")) {
+                    temperatureRead7c = Double.parseDouble(tmpTemp);
+                } else {
+                    jTextField3.setText("");
+                    JOptionPane.showMessageDialog(null, "W polu 'temperatura zmierzona' podaj liczbę z zakresu -10 do +30 z dokładnością do 0,5");
+                }
+            } catch (NumberFormatException e) {
+                jTextField3.setText("");
+                JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'temperatura zmierzona'");
+            }
+        }
+        if ((readAlcoholPower7c != null) && (temperatureRead7c != null)) {
+            try {
+                AlcoholBoard board7c = new AlcoholBoard(readAlcoholPower7c, temperatureRead7c, fileName7c);
+                double score = board7c.vaule;
+                jButton2.setText("" + score);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "ogólny błąd");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Liczba jest wymagana");
+        }
+        Integer powerMeasuredInteger = null;
+        double realPower = 0.0;
+        // odczytana objętość w dm3 
+        Integer givenVolumeInt = null;
+        // tutaj podajemy odczytana temperature alkoholu od -10 do +30 (co 0,5°)   np.17,5
+        Double temperatureRead8d = null;
+        //volume1000kg - objętość 1000kg alkoholu o wyliczonej mocy w 20°C
+        double volume1000kg = 0.0;
+
+        String fileName8d = "dane/tablice8d.csv";
+        String fileName9b = "dane/tablice9b.csv";
+
+        // przygotować validacę   
+        if (jTextField5.getText() != null) {
+            try {
+                String tmp = jTextField5.getText().trim();
+                String tmpTemp = null;
+                if (tmp.contains(",")) {
+                    tmpTemp = tmp.replace(",", ".");
+                } else {
+                    tmpTemp = tmp;
+                }
+                if (tmpTemp.matches("\\+?30|\\+?[12]?[0-9](\\.[05])?|\\-10(\\.0)?|\\-[0-9](\\.[05])?")) {
+                    temperatureRead8d = Double.parseDouble(tmpTemp);
+                } else {
+                    jTextField5.setText("");
+                    JOptionPane.showMessageDialog(null, "W polu 'temperatura zmierzona' podaj liczbę z zakresu -10 do +30 z dokładnością do 0,5");
+                }
+            } catch (NumberFormatException e) {
+                jTextField5.setText("");
+                JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'temperatura w zbiorniku'");
+            }
+        }
+        if (jButton2.getText() != null) {
+            try {
+                // pobieramy moc rzeczywista obliczoną z tablicy 7c i zaokrągloną do całości
+                powerMeasuredInteger = (int) Math.round(Double.parseDouble(jButton2.getText()));
+                realPower = Double.parseDouble(jButton2.getText()) * 10;
+                realPower = Math.round(realPower);
+                realPower /= 10;
+
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu '% vol. w 20ºC' powinna być w przedziale 80 -100");
+            }
+        }
+        if (jTextField4.getText() != null) {
+            try {
+                String tmp = jTextField4.getText().trim();
+                String tmpVol = null;
+                if (tmp.contains(",")) {
+                    tmpVol = tmp.replace(",", ".");
+                } else {
+                    tmpVol = tmp;
+                }
+                if (tmpVol.matches("\\+?\\d*\\.?\\d*")) {
+                    givenVolumeInt = (int) Math.round(Double.parseDouble(tmpVol));
+                    if (givenVolumeInt > 0) {
+                        jTextField4.setText("" + givenVolumeInt);
+                    } else {
+                        givenVolumeInt = null;
+                        jTextField4.setText("");
+                        JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'objętość' podaj liczbę całkowitą wiekszą od 0");
+                    }
+                } else {
+                    jTextField4.setText("");
+                    JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'objętość' podaj liczbę całkowitą wiekszą od 0");
+                }
+            } catch (NumberFormatException e) {
+                jTextField4.setText("");
+                JOptionPane.showMessageDialog(null, "Niepoprawna liczba w polu 'objętość' podaj liczbe całkowitą wiekszą od 0");
+            }
+        }       
+        if ((givenVolumeInt != null) && (powerMeasuredInteger != null) && (temperatureRead8d != null)) {
+            try {
+                  if (powerMeasuredInteger >= 80 && powerMeasuredInteger <= 100) {
+                AlcoholBoard board8d = new AlcoholBoard(powerMeasuredInteger, temperatureRead8d, fileName8d);
+                double correctionTemp = board8d.vaule;
+                double correction = Math.round((correctionTemp - 0.07) * 100);
+               correction /= 100;
+                // score to poprawka tablicowa do obliczeń uzywa sie poprawka-0,07
+                jButton3.setText("" + correctionTemp + " => " + correction);
+                // volumeIn20Degrees => dm3 w 20ºC , po zaokrągleniu do 2-miejsc po przecinku => volumeIn20DegreesView
+                double volumeIn20Degrees = (100 + correction) * givenVolumeInt / 100;
+                double volumeIn20DegreesView = volumeIn20Degrees * 100;
+                volumeIn20DegreesView = Math.round(volumeIn20DegreesView);
+                volumeIn20DegreesView = volumeIn20DegreesView / 100;
+                jButton5.setText("" + volumeIn20DegreesView);
+                //dm3 100% vol.
+                int volumeOf100Percent = (int) Math.round(volumeIn20Degrees * realPower / 100);
+                jButton6.setText("" + volumeOf100Percent);                 
+                //waga netto    
+                // givenVolumeInt - objętość alkoholu w dm3 zaokrąglona do całości
+                // wartość potrzebna do obliczeń: volume1000kg => Obj. 1000kg alk. w 20ºC na podstawie talicy9b
+                AlcoholBoard board9b = new AlcoholBoard(realPower, 1000, fileName9b);
+                volume1000kg = board9b.vaule;
+                // na postawie (dm3 w 20ºC) i odczytu z tablicy 9b dla 1000kg i realPower  np. 28208 * (1000 / 1106,6) = 25606,39070442992 zaokrąglamy = 25606
+                double netWeight = (100000 / volume1000kg) * volumeOf100Percent;
+                netWeight = Math.round(netWeight);
+                netWeight = netWeight / 100;
+                jButton4.setText("" + netWeight);
+                  } else {
+                      JOptionPane.showMessageDialog(null, "Niepoprawna wartość w polu '% vol. w 20ºC' powinna być w przedziale 80 -100");
+                  }                
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "ogólny błąd");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Liczba jest wymagana");
+        }        
+    }//GEN-LAST:event_jButton10ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        jTextField2.setText("");
+        jTextField3.setText("");
+        jTextField4.setText("");
+        jTextField5.setText("");
+        jButton2.setText("");
+        jButton3.setText("");
+        jButton4.setText("");
+        jButton5.setText("");
+        jButton6.setText("");
+        
+    }//GEN-LAST:event_jButton11ActionPerformed
 
     /**
      * @param args the command line arguments

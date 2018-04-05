@@ -1,6 +1,3 @@
-/*
- * 
- */
 package alkohol;
 /**
  * @author Leszek
@@ -22,8 +19,7 @@ public class ListNumber {
 		while (strTok.hasMoreTokens()) {
 			number.add(str+strTok.nextToken());
 		}
-	}
-	
+	}	
 	//  wczytanie całej linii tekstu podzielonego do listy 
 	public void  loadLines(String line) {
 		StringTokenizer strTok = new StringTokenizer(line,";");
@@ -54,8 +50,7 @@ public class ListNumber {
 				return score;
 			}
 		return score;
-	}
-	
+	}	
 	// rozmiar listy
 	public int howNumbers() {
 		return number.size();
